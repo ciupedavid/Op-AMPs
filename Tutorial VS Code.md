@@ -10,11 +10,13 @@
 8. Verify Selenium is installed correctly by running `pip show selenium` to check the version
 9. Download the appropriate version of Chromedriver from the official website: https://chromedriver.chromium.org/downloads
 10. Extract the downloaded file to a directory on your computer and note the location of the executable file.
-11. In your Selenium code, specify the path to the Chromedriver executable using the `webdriver.Chrome(executable_path=[path_to_chromedriver])`
-12. Create a new Python file in VS Code and start writing your Selenium code.
-13. To run the Python code, use the built-in terminal in VS Code and run the command `python [filename.py]` or
+11. Open the Command Prompt by searching for "Command Prompt" in the Start menu and clicking on the result.
+12. Type `systempropertiesadvanced`  in the command prompt to open the environment variable editor
+13. Click on the "Environment Variables" button.
+14. Under "System variables," find the "Path" variable and click "Edit."
+15. Click on "New" and add the path to the chromedriver executable. Click OK and close all the windows.
+16. Create a new Python file in VS Code and start writing your Selenium code.
+17. To run the Python code, use the built-in terminal in VS Code and run the command `python [filename.py]` or
     - press `F5` to run the script, or
     - click on the green run button on the top right corner, or 
     - use the command `Ctrl+Shift+B` to run the script
-
-
