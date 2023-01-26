@@ -23,11 +23,7 @@ import csv
 import openpyxl
 import pandas as pd
 from openpyxl import load_workbook
-from openpyxl.chart import (
-    ScatterChart,
-    Reference,
-    Series
-)
+from openpyxl.chart import (ScatterChart, Reference, Series)
 from openpyxl.chart.axis import ChartLines
 
 class opAMP1(unittest.TestCase):
@@ -173,8 +169,6 @@ class opAMP1(unittest.TestCase):
         os.rename(downloaded_nimble_path, new_nimble_name)
         os.rename(downloaded_ltspice_path, new_ltspice_name)
 
-        time.sleep(2)
-
         with open(r'paths.json') as d:
             paths = json.load(d)['Nimble'][0]
 
@@ -207,9 +201,7 @@ class opAMP1(unittest.TestCase):
         # Open and save text tile from LTSpice
         os.startfile(project_loc + '\\' + device + '\\' + 'AC_Simulation.asc')
         pywinauto.keyboard.send_keys("%{S}")
-        time.sleep(1)
         pywinauto.keyboard.send_keys("{R}")
-        time.sleep(1)
         pywinauto.keyboard.send_keys("%{V}")
         time.sleep(1)
         pywinauto.keyboard.send_keys("{V}")
@@ -238,8 +230,6 @@ class opAMP1(unittest.TestCase):
         extra_files_remove = project_loc + device
         zip_remove_nimble = extra_files_remove + '\\' + 'Nimble - ' + device + ' G' + gain + '.zip'
         zip_remove_ltspice = extra_files_remove + '\\' + 'LTspice - ' + device + ' G' + gain + '.zip'
-
-        time.sleep(2)
 
         # Converting the Transfer Function .csv to .xlsx
         path_file = pd.read_csv(paths['project_location'] + '\\' + paths['device'] + '\\' + 'Amplifier - Transfer Function.csv')
@@ -318,22 +308,6 @@ class opAMP1(unittest.TestCase):
             xl.remove(xl['Sheet11'])
         xl.save(excel_path)
 
-        # # Renaming the collumn names
-        # excel_path = paths['project_location'] + '\\' + paths['device'] + '\\' + 'Amplifier - Transfer Function.xlsx'
-        # xr = pd.read_excel(excel_path)
-        # xr.rename(columns={xr.columns[0]: 'Frequency (Hz)'}, inplace=True)
-        # xr.rename(columns={xr.columns[1]: 'Total (nV/rt(Hz))'}, inplace=True)
-        # xr.rename(columns={xr.columns[2]: ''}, inplace=True)
-        # xr.rename(columns={xr.columns[3]: 'Ltspice Freq'}, inplace=True)
-        # xr.rename(columns={xr.columns[4]: 'Ltspice V(noise)'}, inplace=True)
-        # # rename_column.drop(columns={rename_column.columns[0]}, axis=1, inplace=True)
-
-        # xr['Total (nV/rt(Hz))'] = xr['Total (nV/rt(Hz))'].apply(lambda x: x * 1e9) #TypeError: can't multiply sequence by non-int of type 'float'
-        # xr['Ltspice V(onoise)'] = xr['Ltspice V(noise)'].apply(lambda x: x * 1e9) #TypeError: can't multiply sequence by non-int of type 'float'
-
-        # xr.to_excel(excel_path, sheet_name='G ' + paths['gain'])
-        # time.sleep(3)
-
         # Deleting the extra files
         extra_files_remove = paths['project_location'] + '\\' + paths['device']
         zip_remove_nimble = extra_files_remove + '\\' + 'Nimble - ' + paths['device'] + ' G' + paths['gain'] + '.zip'
@@ -350,7 +324,6 @@ class opAMP1(unittest.TestCase):
         os.remove(zip_remove_nimble)
         os.remove(zip_remove_ltspice)
         shutil.rmtree(extra_files_remove + '\\' + 'Raw Data')
-        time.sleep(2)
 
         with open(r'paths.json') as d:
             paths = json.load(d)['Nimble'][0]
@@ -359,6 +332,15 @@ class opAMP1(unittest.TestCase):
         #"file_location": "C:\\Users\\psuatean\\OneDrive - ENDAVA\\Documents\\Python\\NimbleTest\\LTC6228\\Amplifier - Transfer Function.xlsx"
         workbook = load_workbook(workbook_path)
         sheet = workbook['Sheet1']
+        sheet.title = ("G " + gain)
+
+        sheet.cell(row=1, column=1).value = "Nimble - Freq."
+        sheet.cell(row=1, column=2).value = "Nimble - Mag."
+        sheet.cell(row=1, column=4).value = "LTSpice - Freq."
+        sheet.cell(row=1, column=5).value = "LTSpice - Mag."
+
+        for i in range(1,21):
+            sheet.cell(row=1, column=i).font = openpyxl.styles.Font(bold=True)
 
         x_nimble = Reference(sheet, min_col=2, min_row=2, max_row=1010)
         y_nimble = Reference(sheet, min_col=1, min_row=2, max_row=1010)
@@ -392,8 +374,6 @@ class opAMP1(unittest.TestCase):
         sheet.add_chart(chart, 'J2')
         workbook.save(workbook_path)
 
-        time.sleep(1)
-
         rename_noise_excel = paths['project_location'] + '\\' + paths['device'] + '\\' + 'Amplifier - Transfer Function.xlsx'
         new_noise_excel = paths['project_location'] + '\\' + paths['device'] + '\\' + paths['device'] + '.xlsx'
         os.rename(rename_noise_excel, new_noise_excel)
@@ -410,13 +390,6 @@ class opAMP1(unittest.TestCase):
     def tearDown(self):
         #self.driver.quit()
         pass
-    
+
 if __name__ == '__main__':
     unittest.main()
-
-    # suite = unittest.TestSuite()
-    # suite.addTest(unittest.makeSuite(opAMP1))
-    # suite.addTest(unittest.makeSuite(opAMP2))
-    # runner = unittest.TextTestRunner()
-    # runner.run(suite)
-    # unittest.TextTestRunner.run()
