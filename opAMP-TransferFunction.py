@@ -132,8 +132,10 @@ class opAMP1(unittest.TestCase):
         downloads_path = self.nimbleData['downloads_path']
         gain = self.nimbleData['gain']
         #current_date = self.nimbleData['current_date']
-        current_date = datetime.today().strftime(("%B %d, %Y"))
-        print("date: ", current_date)
+        current_date = datetime.now()
+        day = str(current_date.day)
+        date_str = current_date.strftime(f"%B {day}, %Y")
+        print(date_str)
 
         l = driver.current_url
         device_url = device + 'URL G' + gain + '.txt'
