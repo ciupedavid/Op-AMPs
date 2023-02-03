@@ -23,7 +23,11 @@ import csv
 import openpyxl
 import pandas as pd
 from openpyxl import load_workbook
-from openpyxl.chart import (ScatterChart, Reference, Series)
+from openpyxl.chart import (
+    ScatterChart,
+    Reference,
+    Series
+)
 from openpyxl.chart.axis import ChartLines
 
 class opAMP1(unittest.TestCase):
@@ -132,10 +136,10 @@ class opAMP1(unittest.TestCase):
         downloads_path = self.nimbleData['downloads_path']
         gain = self.nimbleData['gain']
         #current_date = self.nimbleData['current_date']
-        current_date = datetime.now()
-        day = str(current_date.day)
-        date_str = current_date.strftime(f"%B {day}, %Y")
-        print(date_str)
+        now = datetime.now()
+        day = str(now.day)
+        current_date = now.strftime(f"%B {day}, %Y")
+        print("date: ", current_date)
 
         l = driver.current_url
         device_url = device + 'URL G' + gain + '.txt'
@@ -148,8 +152,7 @@ class opAMP1(unittest.TestCase):
         WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(2) > span:nth-child(1)"))).click()
 
         time.sleep(3)
-        #project_path = os.getcwd()
-        project_path = self.nimbleData['project_location']
+        project_path = os.getcwd()
 
         if not os.path.exists(project_path + '\\' + device):
             os.makedirs(project_path + '\\' + device)
@@ -345,6 +348,7 @@ class opAMP1(unittest.TestCase):
         for i in range(1,21):
             sheet.cell(row=1, column=i).font = openpyxl.styles.Font(bold=True)
 
+
         x_nimble = Reference(sheet, min_col=2, min_row=2, max_row=1010)
         y_nimble = Reference(sheet, min_col=1, min_row=2, max_row=1010)
         x_ltspice = Reference(sheet, min_col=5, min_row=2, max_row=1010)
@@ -396,3 +400,10 @@ class opAMP1(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+    # suite = unittest.TestSuite()
+    # suite.addTest(unittest.makeSuite(opAMP1))
+    # suite.addTest(unittest.makeSuite(opAMP2))
+    # runner = unittest.TextTestRunner()
+    # runner.run(suite)
+    # unittest.TextTestRunner.run()
