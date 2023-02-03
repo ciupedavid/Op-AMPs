@@ -153,7 +153,7 @@ class opAMP1(unittest.TestCase):
 
         time.sleep(3)
         #project_path = os.getcwd()
-        project_path = self.nimbleDatabase.project_path['project_path']
+        project_path = self.nimbleData['project_location']
 
         if not os.path.exists(project_path + '\\' + device):
             os.makedirs(project_path + '\\' + device)
