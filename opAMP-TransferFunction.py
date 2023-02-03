@@ -152,7 +152,8 @@ class opAMP1(unittest.TestCase):
         WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(2) > span:nth-child(1)"))).click()
 
         time.sleep(3)
-        project_path = os.getcwd()
+        #project_path = os.getcwd()
+        project_path = self.nimbleDatabase.project_path['project_path']
 
         if not os.path.exists(project_path + '\\' + device):
             os.makedirs(project_path + '\\' + device)
