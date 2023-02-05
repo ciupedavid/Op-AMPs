@@ -23,11 +23,7 @@ import csv
 import openpyxl
 import pandas as pd
 from openpyxl import load_workbook
-from openpyxl.chart import (
-    ScatterChart,
-    Reference,
-    Series
-)
+from openpyxl.chart import (ScatterChart, Reference, Series)
 from openpyxl.chart.axis import ChartLines
 
 class opAMP1(unittest.TestCase):
@@ -44,11 +40,11 @@ class opAMP1(unittest.TestCase):
         driver.set_window_position(-1000, 0)
         driver.maximize_window()
         driver.get('https://beta-tools.analog.com/noise/')
-        if (self.nimbleData['filter_frequency'] != 0): #self.nimbleData['resistance_input'
+        if (self.nimbleData['filter_frequency'] != 0): 
             driver.get('https://beta-tools.analog.com/noise/#session=HO1dbVi7oU273IbstN6GiA&step=nsONZTDZTletQ0rqfFMQ0g')
             print("Filter was added.")
         else:
-            driver.get('https://beta-tools.analog.com/noise/#session=0460LuqFaUGaPwEazOdZ9w&step=ZiZ21WxLTiiX7jikxx07Aw')
+            driver.get('https://beta-tools.analog.com/noise/#session=3DXu94GphEaV8KEWEZskrw&step=C6ZVBnBhT3aGgWGxrSJ7AA')
             print("No filther was added.")
         time.sleep(1)
 
@@ -152,13 +148,14 @@ class opAMP1(unittest.TestCase):
         WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(2) > span:nth-child(1)"))).click()
 
         time.sleep(3)
-        project_path = os.getcwd()
+        project_path = self.nimbleData['project_location']
+        print("project path; " + project_path)
 
         if not os.path.exists(project_path + '\\' + device):
             os.makedirs(project_path + '\\' + device)
         dir_list = os.listdir()
-        #print(dir_list)
-        #print(project_path + device)
+        print(dir_list)
+        print(project_path + device)
 
         ltspice_download_path = downloads_path + 'LTSpice ' + current_date + '.zip'
         shutil.move(ltspice_download_path, project_path + '/' + device)
@@ -180,6 +177,7 @@ class opAMP1(unittest.TestCase):
 
         #Path Variables
         project_location = paths['project_location']
+        #project_location: D:\\excel_files
         device = paths['device']
         gain = paths['gain']
 
@@ -188,6 +186,7 @@ class opAMP1(unittest.TestCase):
         with zipfile.ZipFile(unzip_path_ltspice) as zip_ref:
             new_path = project_location + '\\' + device
             zip_ref.extractall(new_path)
+
         unzip_path_nimble = project_location + '\\' + device + '\\' + 'Nimble - ' + device + ' G' + gain + '.zip'
         with zipfile.ZipFile(unzip_path_nimble) as zip_ref:
             zip_ref.extractall(new_path)
@@ -195,17 +194,19 @@ class opAMP1(unittest.TestCase):
         # Move Transfer Function csv to device folder
         time.sleep(1)
         raw_data = project_location + '\\' + device + '\\' + 'Raw Data' + '\\' + 'Individual Stage Data' + '\\' + 'Amplifier' + '\\' + 'Amplifier - Transfer Function.csv'
+        print(raw_data)
         destination = project_location + '\\' + device
+        print(destination)
         shutil.move(raw_data, destination)
-        time.sleep(3)
 
         # Path Variables
         project_loc = paths['project_location']
         device = paths['device']
         gain = paths['gain']
-
+    
         # Open and save text tile from LTSpice
         os.startfile(project_loc + '\\' + device + '\\' + 'AC_Simulation.asc')
+        time.sleep(1)
         pywinauto.keyboard.send_keys("%{S}")
         pywinauto.keyboard.send_keys("{R}")
         pywinauto.keyboard.send_keys("%{V}")
