@@ -1,7 +1,7 @@
 # Step-by-step tutorial for installing Python, Selenium and Chromedriver using VS Code
 
 1.	Download and install VS Code from the official website:
-    a.	https://code.visualstudio.com/download
+a.	https://code.visualstudio.com/download
 2.	Download the latest version of Python from the official website
     a.	https://www.python.org/downloads/
     b.	Add Python to the PATH during the installation process.
