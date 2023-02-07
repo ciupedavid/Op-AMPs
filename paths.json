@@ -13,7 +13,7 @@
             "_comment1": "The current date should be edited to today's date due to the fact that we're downloading Nimble and LTspice data name as the following example: LTspice November 22, 2022",
         "downloads_path": "C:\\Users\\test\\Downloads\\",
             "_comment2": "Chrome downloads the files on user's downloads folder. The script uses this path to move the files in a more convenient path",
-        "project_location": "C:\\QA\\nimble_excel_files",
+        "project_location": "C:\\QA\\nimble_excel_files\\",
             "_comment3": "Project location should be a path were we want to store the results after running the scrips",
         "x_axis_min": "10000",
         "x_axis_max": "1.00E+09",
