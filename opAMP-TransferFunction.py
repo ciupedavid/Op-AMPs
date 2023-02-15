@@ -48,6 +48,40 @@ class opAMP1(unittest.TestCase):
             print("Filter was added.")
         time.sleep(1)
 
+        # Accept cookies1
+        #time.sleep(1)
+        #WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='noise-spinner']/div[1]")))
+        #time.sleep(7)
+        #WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
+        #time.sleep(1)
+        
+        # Accept cookies2
+        wait = WebDriverWait(driver, 15)
+        element = wait.until_not(EC.presence_of_element_located((By.CSS_SELECTOR, "#noise-spinner > div > div.ajax-spinner")))
+        
+        wait = WebDriverWait(driver, 15)
+        element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#cookie-consent-container > div > div")))
+
+        wait = WebDriverWait(driver, 15)
+        element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#cookie-consent-container > div > div > div.modal-body > div.short-description > a")))
+        element.click()                
+        
+        # Click on already dragged Amplifier
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='main-content-container']/div[@id='application-view']/div[@id='build-signal-chain-tab-content']/div[@id='adi-signal-chain-row']/div[@id='analog-signal-chain-group']/div[@id='signal-chain-drop-area']/table[1]/tr[1]/td[1]/div[1]/div[2]/div[2]/*[1]"))).click()
+
+        # Amp Configuration
+        time.sleep(1)
+        driver.execute_script(f"document.querySelector('#amp-gain-2').value={self.nimbleData['gain']}")
+        
+        # Select specific AMP
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#text6747-2-6 > tspan.schematic-edit-icon.schematic-part-edit-selection-link.schematic-edit-selection-link"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#filter-0"))).send_keys(self.nimbleData['device'])
+        time.sleep(1)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#device-table > div.slick-pane.slick-pane-top.slick-pane-left > div.slick-viewport.slick-viewport-top.slick-viewport-left > div > div"))).click()
+        time.sleep(1)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#partSelectModal2 > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()        
+        time.sleep(5)
+
         #converting kino, Mega
         d1 = {'k': 1000,'M': 1000000}
         def text_to_num1(text):
@@ -93,34 +127,6 @@ class opAMP1(unittest.TestCase):
             return (c2position)
         val_to_pos_c2value(new_c2value)
 
-        # Accept cookies
-        #time.sleep(1)
-        #WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='noise-spinner']/div[1]")))
-        #time.sleep(7)
-        #WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
-        #time.sleep(1)
-        
-        # Accept cookies
-        wait = WebDriverWait(driver, 15)
-        element = wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, "#noise-spinner > div")))
-        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
-        
-        # Click on already dragged Amplifier
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='main-content-container']/div[@id='application-view']/div[@id='build-signal-chain-tab-content']/div[@id='adi-signal-chain-row']/div[@id='analog-signal-chain-group']/div[@id='signal-chain-drop-area']/table[1]/tr[1]/td[1]/div[1]/div[2]/div[2]/*[1]"))).click()
-
-        # Amp Configuration
-        time.sleep(1)
-        driver.execute_script(f"document.querySelector('#amp-gain-2').value={self.nimbleData['gain']}")
-        
-        # Select specific AMP
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#text6747-2-6 > tspan.schematic-edit-icon.schematic-part-edit-selection-link.schematic-edit-selection-link"))).click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#filter-0"))).send_keys(self.nimbleData['device'])
-        time.sleep(1)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#device-table > div.slick-pane.slick-pane-top.slick-pane-left > div.slick-viewport.slick-viewport-top.slick-viewport-left > div > div"))).click()
-        time.sleep(1)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#partSelectModal2 > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()        
-        time.sleep(5)
-
         # Resitance slider value
         self.scrollToRValue(rposition, driver)
         
@@ -163,12 +169,12 @@ class opAMP1(unittest.TestCase):
         print(dir_list)
         print(project_path + device)
 
-        ltspice_download_path = downloads_path + 'LTSpice ' + current_date + '.zip'
-        shutil.move(ltspice_download_path, project_path + '/' + device)
-        nimble_download_path = downloads_path + 'Raw Data Export - ' + current_date + '.zip'
-        shutil.move(nimble_download_path, project_path + '/' + device)
+        ltspice_download_path = downloads_path + '\\' + 'LTSpice ' + current_date + '.zip'
+        shutil.move(ltspice_download_path, project_path + '\\' + device)
+        nimble_download_path = downloads_path + '\\' + 'Raw Data Export - ' + current_date + '.zip'
+        shutil.move(nimble_download_path, project_path + '\\' + device)
         device_download_path = device + 'URL G' + gain + '.txt'
-        shutil.move(device_download_path, project_path + '/' + device)
+        shutil.move(device_download_path, project_path + '\\' + device)
         time.sleep(1)
 
         downloaded_nimble_path = project_path + '\\' + device + '\\' + 'Raw Data Export - ' + current_date + '.zip'
@@ -177,6 +183,7 @@ class opAMP1(unittest.TestCase):
         new_ltspice_name = project_path + '\\' + device + '\\' + 'LTspice - ' + device + ' G' + gain + '.zip'
         os.rename(downloaded_nimble_path, new_nimble_name)
         os.rename(downloaded_ltspice_path, new_ltspice_name)
+
 
         with open(r'paths.json') as d:
             paths = json.load(d)['Nimble'][0]
