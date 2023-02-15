@@ -40,12 +40,12 @@ class opAMP1(unittest.TestCase):
         driver.set_window_position(-1000, 0)
         driver.maximize_window()
         driver.get('https://beta-tools.analog.com/noise/')
-        if (self.nimbleData['filter_frequency'] != 0): 
-            driver.get('https://beta-tools.analog.com/noise/#session=HO1dbVi7oU273IbstN6GiA&step=nsONZTDZTletQ0rqfFMQ0g')
-            print("Filter was added.")
-        else:
+        if (self.nimbleData['filter_frequency'] == 0): 
             driver.get('https://beta-tools.analog.com/noise/#session=3DXu94GphEaV8KEWEZskrw&step=C6ZVBnBhT3aGgWGxrSJ7AA')
             print("No filther was added.")
+        else:
+            driver.get('https://beta-tools.analog.com/noise/#session=HO1dbVi7oU273IbstN6GiA&step=nsONZTDZTletQ0rqfFMQ0g')
+            print("Filter was added.")
         time.sleep(1)
 
         #converting kino, Mega
@@ -94,25 +94,31 @@ class opAMP1(unittest.TestCase):
         val_to_pos_c2value(new_c2value)
 
         # Accept cookies
-        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='noise-spinner']/div[1]")))
-        time.sleep(7)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
-        time.sleep(1)
+        #time.sleep(1)
+        #WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='noise-spinner']/div[1]")))
+        #time.sleep(7)
+        #WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
+        #time.sleep(1)
+        
+        # Accept cookies
+        wait = WebDriverWait(driver, 15)
+        element = wait.until(EC.invisibility_of_element_located((By.CSS_SELECTOR, "#noise-spinner > div")))
+        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
         
         # Click on already dragged Amplifier
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='main-content-container']/div[@id='application-view']/div[@id='build-signal-chain-tab-content']/div[@id='adi-signal-chain-row']/div[@id='analog-signal-chain-group']/div[@id='signal-chain-drop-area']/table[1]/tr[1]/td[1]/div[1]/div[2]/div[2]/*[1]"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='main-content-container']/div[@id='application-view']/div[@id='build-signal-chain-tab-content']/div[@id='adi-signal-chain-row']/div[@id='analog-signal-chain-group']/div[@id='signal-chain-drop-area']/table[1]/tr[1]/td[1]/div[1]/div[2]/div[2]/*[1]"))).click()
 
         # Amp Configuration
         time.sleep(1)
         driver.execute_script(f"document.querySelector('#amp-gain-2').value={self.nimbleData['gain']}")
         
         # Select specific AMP
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#text6747-2-6 > tspan.schematic-edit-icon.schematic-part-edit-selection-link.schematic-edit-selection-link"))).click()
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#filter-0"))).send_keys(self.nimbleData['device'])
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#text6747-2-6 > tspan.schematic-edit-icon.schematic-part-edit-selection-link.schematic-edit-selection-link"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#filter-0"))).send_keys(self.nimbleData['device'])
         time.sleep(1)
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#device-table > div.slick-pane.slick-pane-top.slick-pane-left > div.slick-viewport.slick-viewport-top.slick-viewport-left > div > div"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#device-table > div.slick-pane.slick-pane-top.slick-pane-left > div.slick-viewport.slick-viewport-top.slick-viewport-left > div > div"))).click()
         time.sleep(1)
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#partSelectModal2 > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()        
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#partSelectModal2 > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()        
         time.sleep(5)
 
         # Resitance slider value
@@ -122,7 +128,7 @@ class opAMP1(unittest.TestCase):
         self.scrollToC2Value(c2position, driver)
 
         # Use this Amplifier button
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#config-signal-chain-item-modal > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#config-signal-chain-item-modal > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()
         
         #Select Next Steps tab
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#next-steps-tab"))).click()
@@ -135,17 +141,17 @@ class opAMP1(unittest.TestCase):
         now = datetime.now()
         day = str(now.day)
         current_date = now.strftime(f"%B {day}, %Y")
-        print("date: ", current_date)
+        #print("date: ", current_date)
 
         l = driver.current_url
         device_url = device + 'URL G' + gain + '.txt'
         with open(device_url, 'w') as f:
             f.write(l)
-        print(l)
+        #print(l)
         time.sleep(1)
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(1) > span:nth-child(1)"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(1) > span:nth-child(1)"))).click()
         time.sleep(1)
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(2) > span:nth-child(1)"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(2) > span:nth-child(1)"))).click()
 
         time.sleep(3)
         project_path = self.nimbleData['project_location']
@@ -194,27 +200,32 @@ class opAMP1(unittest.TestCase):
         # Move Transfer Function csv to device folder
         time.sleep(1)
         raw_data = project_location + '\\' + device + '\\' + 'Raw Data' + '\\' + 'Individual Stage Data' + '\\' + 'Amplifier' + '\\' + 'Amplifier - Transfer Function.csv'
-        print(raw_data)
+        #print(raw_data)
         destination = project_location + '\\' + device
-        print(destination)
+        #print(destination)
         shutil.move(raw_data, destination)
 
         # Path Variables
         project_loc = paths['project_location']
         device = paths['device']
         gain = paths['gain']
-    
+        time.sleep(1)
+        
         # Open and save text tile from LTSpice
         os.startfile(project_loc + '\\' + device + '\\' + 'AC_Simulation.asc')
         time.sleep(1)
         pywinauto.keyboard.send_keys("%{S}")
+        time.sleep(1)
         pywinauto.keyboard.send_keys("{R}")
+        time.sleep(1)
         pywinauto.keyboard.send_keys("%{V}")
         time.sleep(1)
         pywinauto.keyboard.send_keys("{V}")
         time.sleep(1)
         pywinauto.keyboard.send_keys("{DOWN}")
+        time.sleep(1)
         pywinauto.keyboard.send_keys("{DOWN}")
+        time.sleep(1)
         pywinauto.keyboard.send_keys("{DOWN}")
         time.sleep(1)
         pywinauto.keyboard.send_keys("{UP}")
@@ -395,16 +406,10 @@ class opAMP1(unittest.TestCase):
     def scrollToC2Value(value: int, driver):
         driver.execute_script(f"document.querySelector('#c2-slider').value = {c2position}; document.querySelector('#c2-slider').dispatchEvent(new Event('input'));")    
 
+
     def tearDown(self):
         #self.driver.quit()
         pass
 
 if __name__ == '__main__':
     unittest.main()
-
-    # suite = unittest.TestSuite()
-    # suite.addTest(unittest.makeSuite(opAMP1))
-    # suite.addTest(unittest.makeSuite(opAMP2))
-    # runner = unittest.TextTestRunner()
-    # runner.run(suite)
-    # unittest.TextTestRunner.run()
