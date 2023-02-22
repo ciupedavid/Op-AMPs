@@ -2,6 +2,7 @@ import unittest
 import os
 import shutil
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -30,8 +31,11 @@ class opAMP1(unittest.TestCase):
 
     def setUp(self):
         # driver instance
+        options = Options()
+        options.headless = True
+        options.add_argument("--headless=new")
         chromedriver_autoinstaller.install()
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(options=options)
         with open(r'paths.json') as d:
             self.nimbleData = json.load(d)['Nimble'][0]
 
@@ -40,6 +44,7 @@ class opAMP1(unittest.TestCase):
         driver.set_window_position(-1000, 0)
         driver.maximize_window()
         driver.get('https://beta-tools.analog.com/noise/')
+        # based on the json file the script will select a link with or without filter.
         if (self.nimbleData['filter_frequency'] == 0): 
             driver.get('https://beta-tools.analog.com/noise/#session=3DXu94GphEaV8KEWEZskrw&step=C6ZVBnBhT3aGgWGxrSJ7AA')
             print("No filther was added.")
@@ -48,41 +53,7 @@ class opAMP1(unittest.TestCase):
             print("Filter was added.")
         time.sleep(1)
 
-        # Accept cookies1
-        #time.sleep(1)
-        #WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='noise-spinner']/div[1]")))
-        #time.sleep(7)
-        #WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
-        #time.sleep(1)
-        
-        # Accept cookies2
-        wait = WebDriverWait(driver, 15)
-        element = wait.until_not(EC.presence_of_element_located((By.CSS_SELECTOR, "#noise-spinner > div > div.ajax-spinner")))
-        
-        wait = WebDriverWait(driver, 15)
-        element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#cookie-consent-container > div > div")))
-
-        wait = WebDriverWait(driver, 15)
-        element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#cookie-consent-container > div > div > div.modal-body > div.short-description > a")))
-        element.click()                
-        
-        # Click on already dragged Amplifier
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='main-content-container']/div[@id='application-view']/div[@id='build-signal-chain-tab-content']/div[@id='adi-signal-chain-row']/div[@id='analog-signal-chain-group']/div[@id='signal-chain-drop-area']/table[1]/tr[1]/td[1]/div[1]/div[2]/div[2]/*[1]"))).click()
-
-        # Amp Configuration
-        time.sleep(1)
-        driver.execute_script(f"document.querySelector('#amp-gain-2').value={self.nimbleData['gain']}")
-        
-        # Select specific AMP
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#text6747-2-6 > tspan.schematic-edit-icon.schematic-part-edit-selection-link.schematic-edit-selection-link"))).click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#filter-0"))).send_keys(self.nimbleData['device'])
-        time.sleep(1)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#device-table > div.slick-pane.slick-pane-top.slick-pane-left > div.slick-viewport.slick-viewport-top.slick-viewport-left > div > div"))).click()
-        time.sleep(1)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#partSelectModal2 > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()        
-        time.sleep(5)
-
-        #converting kino, Mega
+        # dictionary converting kino, Mega
         d1 = {'k': 1000,'M': 1000000}
         def text_to_num1(text):
             if text[-1] in d1:
@@ -92,7 +63,7 @@ class opAMP1(unittest.TestCase):
                 return Decimal(text)
         new_rvalue = text_to_num1(self.nimbleData['rvalue'])
 
-        #converting from femto, pico, nano, micro
+        # dictionary converting from femto, pico, nano, micro
         d2 = {'f': 0.000000000000001, 'p':0.000000000001, 'n':0.000000001, 'u':0.000001}
         def text_to_num2(text):
             if text[-1] in d2:
@@ -127,6 +98,29 @@ class opAMP1(unittest.TestCase):
             return (c2position)
         val_to_pos_c2value(new_c2value)
 
+        # Accept cookies
+        time.sleep(1)
+        WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='noise-spinner']/div[1]")))
+        time.sleep(7)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="cookie-consent-container"]/div/div/div[2]/div[1]/a'))).click()
+        time.sleep(1)
+        
+        # Click on already dragged Amplifier
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//body/div[@id='base-container']/div[@id='main-content-container']/div[@id='application-view']/div[@id='build-signal-chain-tab-content']/div[@id='adi-signal-chain-row']/div[@id='analog-signal-chain-group']/div[@id='signal-chain-drop-area']/table[1]/tr[1]/td[1]/div[1]/div[2]/div[2]/*[1]"))).click()
+
+        # Amp Configuration
+        time.sleep(1)
+        driver.execute_script(f"document.querySelector('#amp-gain-input').value={self.nimbleData['gain']}")
+        
+        # Select specific AMP
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#text6747-2-6 > tspan.schematic-edit-icon.schematic-part-edit-selection-link.schematic-edit-selection-link"))).click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#filter-0"))).send_keys(self.nimbleData['device'])
+        time.sleep(1)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#device-table > div.slick-pane.slick-pane-top.slick-pane-left > div.slick-viewport.slick-viewport-top.slick-viewport-left > div > div"))).click()
+        time.sleep(1)
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#partSelectModal2 > div.modal.fade.in.show > div > div > form > div > button.btn.btn-primary"))).click()        
+        time.sleep(5)
+
         # Resitance slider value
         self.scrollToRValue(rposition, driver)
         
@@ -158,7 +152,10 @@ class opAMP1(unittest.TestCase):
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(1) > span:nth-child(1)"))).click()
         time.sleep(1)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "body.ember-application:nth-child(2) div.tab-content:nth-child(2) div.download-area div.download-individual-buttons div.download-button-row:nth-child(1) button.btn.btn-primary:nth-child(2) > span:nth-child(1)"))).click()
-
+        time.sleep(1)
+        
+        print("Files were downloaded")
+        
         time.sleep(3)
         project_path = self.nimbleData['project_location']
         print("project path; " + project_path)
@@ -169,6 +166,7 @@ class opAMP1(unittest.TestCase):
         print(dir_list)
         print(project_path + device)
 
+        # this script is moving the downloaded file to the project folder
         ltspice_download_path = downloads_path + '\\' + 'LTSpice ' + current_date + '.zip'
         shutil.move(ltspice_download_path, project_path + '\\' + device)
         nimble_download_path = downloads_path + '\\' + 'Raw Data Export - ' + current_date + '.zip'
@@ -177,6 +175,7 @@ class opAMP1(unittest.TestCase):
         shutil.move(device_download_path, project_path + '\\' + device)
         time.sleep(1)
 
+        #this script is renaming the two zip files
         downloaded_nimble_path = project_path + '\\' + device + '\\' + 'Raw Data Export - ' + current_date + '.zip'
         new_nimble_name = project_path + '\\' + device + '\\' + 'Nimble - ' + device + ' G' + gain + '.zip'
         downloaded_ltspice_path = project_path + '\\' + device + '\\' + 'LTspice ' + current_date + '.zip'
@@ -190,7 +189,6 @@ class opAMP1(unittest.TestCase):
 
         #Path Variables
         project_location = paths['project_location']
-        #project_location: D:\\excel_files
         device = paths['device']
         gain = paths['gain']
 
@@ -216,11 +214,11 @@ class opAMP1(unittest.TestCase):
         project_loc = paths['project_location']
         device = paths['device']
         gain = paths['gain']
-        time.sleep(1)
+        time.sleep(2)
         
         # Open and save text tile from LTSpice
         os.startfile(project_loc + '\\' + device + '\\' + 'AC_Simulation.asc')
-        time.sleep(1)
+        time.sleep(2)
         pywinauto.keyboard.send_keys("%{S}")
         time.sleep(1)
         pywinauto.keyboard.send_keys("{R}")
